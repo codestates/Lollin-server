@@ -1,12 +1,17 @@
 const mongoDB = require('../repository/connectionMongoDB');
 
-mongoDB.connect((err) => {
-  const collection = mongoDB.db('lollin').collection('items');
-  // perform actions on the collection object
-  //   collection.insertOne(test, (err, res) => {
-  //     if (err) throw err;
+const selectAll = function (collectionName, callback) {
+  mongoDB.connect((err, db) => {
+    if (err) callback(err);
+    let dbo = db.db('lollin');
+    dbo
+      .collection(`${collectionName}`)
+      .find({})
+      .toArray(function (err, result) {
+        callback(err, result);
+        //db.close();
+      });
+  });
+};
 
-  //     console.log('1 document inserted');
-  //     mongoDB.close();
-  //   });
-});
+module.exports = selectAll;

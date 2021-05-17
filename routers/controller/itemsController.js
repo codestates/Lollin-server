@@ -1,16 +1,11 @@
 const router = require('express').Router();
-const axios = require('axios');
+const selectAll = require('../../service/itemsService');
 router.get('/', (req, res) => {
-	axios
-		.get('http://ddragon.leagueoflegends.com/cdn/11.10.1/data/ko_KR/item.json')
-		.then((response) => {
-			console.log(response.data);
-			let data = response.data;
-			res.send(data);
-		})
-		.catch((err) => {
-			console.log(err);
-			res.status(500).send(err);
-		});
+  selectAll('items', (err, result) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+    res.status(200).send(result);
+  });
 });
 module.exports = router;
