@@ -1,6 +1,13 @@
-express = require('express');
 require('dotenv').config();
-const app = express();
+const app = require('express')();
+const router = require('./routers/router');
+
+app.use('/user', router.userController);
+app.use('/champions', router.championsController);
+app.use('/items', router.itemsController);
+app.use('/utils', router.utilsController);
+app.use('/members', router.membersController);
+
 app.get('/', (req, res) => {
 	res.send('hello world');
 });
