@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const selectAll = require('../../service/itemsService');
+const selectAll = require('../../service/readService');
 router.get('/', (req, res) => {
   selectAll('items', (err, result) => {
     if (err) {

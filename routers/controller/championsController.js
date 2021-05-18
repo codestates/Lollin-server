@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const axios = require('axios');
+const selectAll = require('../../service/readService');
 router.get('/', (req, res) => {
   selectAll('champions', (err, result) => {
     if (err) {
