@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const axios = require('axios');
-// const insert = require('../../service/itemsService');
+const insert = require('./itemsService');
+
 router.get('/patch', (req, res) => {
   axios
     .get('http://ddragon.leagueoflegends.com/cdn/11.10.1/data/ko_KR/item.json')
