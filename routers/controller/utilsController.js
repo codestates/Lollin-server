@@ -25,4 +25,13 @@ router.get('/search?', (req, res) => {
 			res.status(500).send(err);
 		});
 });
+router.get('/rotation', (req, res) => {
+	axios(configGenerator('rotation'))
+		.then((response) => {
+			res.status(200).send(response.data);
+		})
+		.catch((err) => {
+			res.status(404).send(err);
+		});
+});
 module.exports = router;
