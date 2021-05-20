@@ -1,29 +1,11 @@
 const router = require('express').Router();
-const MongoClient = require('mongodb').MongoClient;
-require('dotenv').config();
+const userRepository = require('../../repository/userRepository');
+const userService = require('../../service/userService');
 
 //회원가입
 router.post('/signup', (req, res) => {
-  let user = {
-    username: req.body.username,
-    password: req.body.password,
-    nickname: req.body.nickname,
-    email: req.body.email,
-  };
-
-  const mongoDB = new MongoClient(process.env.Mongdb_url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  mongoDB.connect((err) => {
-    const collection = mongoDB.db('lollin').collection('users');
-    collection.insertOne(user, (err, res) => {
-      if (err) throw err;
-      console.log(user);
-      mongoDB.close();
-    });
-  });
-
+  const user = userService.userVO(req.body);
+  userRepository.signup(user);
   res.send('user');
 });
 
