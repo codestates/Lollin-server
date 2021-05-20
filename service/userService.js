@@ -2,6 +2,14 @@ const bcrypt = require('bcrypt');
 
 const userService = {
   userVO: (requestBody) => {
+    if (
+      !requestBody.username ||
+      !requestBody.nickname ||
+      !requestBody.email ||
+      !requestBody.password
+    ) {
+      return null;
+    }
     let user = {};
     user.username = requestBody.username;
     user.nickname = requestBody.nickname;
