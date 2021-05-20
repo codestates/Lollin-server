@@ -2,6 +2,10 @@ require('dotenv').config();
 const app = require('express')();
 const router = require('./routers/router');
 const axios = require('axios');
+const express = require('body-parser');
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.use('/user', router.userController);
 app.use('/champions', router.championsController);
