@@ -12,7 +12,6 @@ const userRepository = {
       const collection = mongoDB.db('lollin').collection('users');
       collection.insertOne(user, (err, res) => {
         if (err) throw err;
-        console.log(user);
         mongoDB.close();
       });
     });

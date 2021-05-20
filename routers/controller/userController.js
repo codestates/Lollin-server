@@ -5,8 +5,12 @@ const userService = require('../../service/userService');
 //회원가입
 router.post('/signup', (req, res) => {
   const user = userService.userVO(req.body);
-  userRepository.signup(user);
-  res.send('user');
+  if (!user) {
+    res.status(400).send('insufficient datas');
+  } else {
+    userRepository.signup(user);
+    res.status(200).send('successfully sign up');
+  }
 });
 
 //로그인
