@@ -16,23 +16,23 @@ app.use('/members', router.membersController);
 let currentVersion;
 
 axios
-  .get('https://ddragon.leagueoflegends.com/api/versions.json')
-  .then((res) => {
-    currentVersion = res.data[0];
-  })
-  .then(() => {
-    setInterval(() => {
-      require('./patch/patchController')(currentVersion, (version) => {
-        currentVersion = version;
-        console.log('patch occured, Current version: ' + currentVersion);
-      });
-    }, 3600000);
-  });
+	.get('https://ddragon.leagueoflegends.com/api/versions.json')
+	.then((res) => {
+		currentVersion = res.data[0];
+	})
+	.then(() => {
+		setInterval(() => {
+			require('./patch/patchController')(currentVersion, (version) => {
+				currentVersion = version;
+				console.log('patch occured, Current version: ' + currentVersion);
+			});
+		}, 3600000);
+	});
 
 app.get('/', (req, res) => {
-  res.send('hello world');
+	res.send('hello world');
 });
 
 app.listen(process.env.PORT, () => {
-  console.log(`server is listening ${process.env.PORT}`);
+	console.log(`server is listening ${process.env.PORT}`);
 });
