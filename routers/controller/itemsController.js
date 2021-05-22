@@ -11,11 +11,19 @@ router.get('/all', (req, res) => {
 		res.status(200).send(result);
 	});
 });
+function pushItems(item, arr = []) {
+	let currentItem = item.nextAll();
+	arr.push(currentItem);
+	if (currentItem.nextAll().attr('class') !== 'header-primary') {
+		return pushItems(currentItem, arr);
+	} else {
+		return arr;
+	}
+}
 router.get('/patched', (req, res) => {
 	axios
 		.get('https://ddragon.leagueoflegends.com/api/versions.json')
 		.then((response) => {
-			console.log(response.data);
 			let currentV = response.data[0];
 			let arr = currentV.split('.');
 			let fisrtNum = arr[0];
@@ -25,8 +33,31 @@ router.get('/patched', (req, res) => {
 				(err, response, html) => {
 					if (!err && response.statusCode === 200) {
 						const $ = cheerio.load(html);
+						let patchItemsHeader = $('#patch-items').parent();
+						let arr = pushItems(patchItemsHeader);
+						let items = [];
 
-						res.send(response.data);
+						for (let i = 0; i < arr.length; i++) {
+							let item = arr[i].find('h3:eq(0)').text();
+							let explain = arr[i].find('blockquote:eq(0)');
+							let contentNum = explain.nextAll('.attribute-change').length;
+							let contents = [];
+							for (let j = 0; j < contentNum; j++) {
+								let str = arr[i]
+									.find(`.attribute-change:eq(${j})`)
+									.text()
+									.replace(/[\r\n\t]/g, '');
+								contents.push(str);
+							}
+							let img = arr[i].find('img:eq(0)').attr('src');
+							items.push({
+								item: item,
+								explain: explain.text().replace(/[\r\n\t]/g, ''),
+								contents: contents,
+								img: img,
+							});
+						}
+						res.send({ data: items });
 					} else {
 						res.status(501).send(err);
 					}
