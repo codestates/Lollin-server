@@ -2,6 +2,7 @@ const router = require('express').Router();
 const selectAll = require('../../service/readService');
 const request = require('request');
 const cheerio = require('cheerio');
+const axios = require('axios');
 router.get('/all', (req, res) => {
 	selectAll('items', (err, result) => {
 		if (err) {
@@ -9,6 +10,32 @@ router.get('/all', (req, res) => {
 		}
 		res.status(200).send(result);
 	});
+});
+router.get('/patched', (req, res) => {
+	axios
+		.get('https://ddragon.leagueoflegends.com/api/versions.json')
+		.then((response) => {
+			console.log(response.data);
+			let currentV = response.data[0];
+			let arr = currentV.split('.');
+			let fisrtNum = arr[0];
+			let secondNum = arr[1];
+			request(
+				`https://kr.leagueoflegends.com/ko-kr/news/game-updates/patch-${fisrtNum}-${secondNum}-notes/`,
+				(err, response, html) => {
+					if (!err && response.statusCode === 200) {
+						const $ = cheerio.load(html);
+
+						res.send(response.data);
+					} else {
+						res.status(501).send(err);
+					}
+				},
+			);
+		})
+		.catch((err) => {
+			res.status(500).send(err);
+		});
 });
 router.get('/versus', (req, res) => {
 	let champ1 = req.query.champ1;
