@@ -57,6 +57,24 @@ const userRepository = {
       mongoDB.close();
     });
   },
+  check: (flag, data, HttpResponse) => {
+    const mongoDB = new MongoClient(process.env.Mongdb_url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    mongoDB.connect(async (err) => {
+      const collection = mongoDB.db('lollin').collection('users');
+      const wantedData = {};
+      wantedData[`${flag}`] = data;
+      const userData = await collection.findOne(wantedData);
+      if (!userData) {
+        HttpResponse.status(200).send('available username');
+      } else {
+        HttpResponse.status(409).send(`sorry!! ${flag} is duplicated!`);
+      }
+      mongoDB.close();
+    });
+  },
 };
 
 module.exports = userRepository;
