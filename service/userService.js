@@ -1,21 +1,30 @@
 const bcrypt = require('bcrypt');
+const userRepository = require('../repository/userRepository');
 
 const userService = {
-  userVO: (requestBody) => {
-    if (
-      !requestBody.username ||
-      !requestBody.nickname ||
-      !requestBody.email ||
-      !requestBody.password
-    ) {
-      return null;
+  signup: (requestBody, res) => {
+    const { username, nickname, email, password } = requestBody;
+    if (!username || !nickname || !email || !password) {
+      res.send(400).send('insufficient datas');
+    } else {
+      let user = {
+        username: username,
+        nickname: nickname,
+        email: email,
+        password: bcrypt.hashSync(password, 5),
+        type: 'none',
+        createdAt: new Date(),
+      };
+      userRepository.signup(user, res);
     }
-    let user = {};
-    user.username = requestBody.username;
-    user.nickname = requestBody.nickname;
-    user.email = requestBody.email;
-    user.password = bcrypt.hashSync(requestBody.password, 5);
-    return user;
+  },
+  login: (requestBody, res) => {
+    const { username, password } = requestBody;
+    if (!username || !password) {
+      res.send(400).send('insufficient datas');
+    } else {
+      userRepository.login(requestBody, res);
+    }
   },
 };
 
