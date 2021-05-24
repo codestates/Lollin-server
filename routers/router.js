@@ -3,13 +3,13 @@ const itemsController = require('./controller/itemsController');
 const championsController = require('./controller/championsController');
 const utilsController = require('./controller/utilsController');
 const membersController = require('./controller/membersController');
-const versusController = require('./controller/versusController');
+const recommendController = require('./controller/recommendController');
 let routes = {
 	userController: userController,
 	itemsController: itemsController,
 	championsController: championsController,
 	utilsController: utilsController,
 	membersController: membersController,
-	versusController: versusController,
+	recommendController: recommendController,
 };
 module.exports = routes;
