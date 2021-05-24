@@ -63,7 +63,7 @@ router.get('/runes', (req, res) => {
 				if (!err && response.statusCode === 200) {
 					const $ = cheerio.load(html);
 					let runeArr = [];
-					let result = $('div.rune');
+					let result = $('div.probuild');
 					console.log(result.html());
 					res.send(result.html());
 				} else {
