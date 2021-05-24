@@ -26,6 +26,16 @@ const userService = {
       userRepository.login(requestBody, res);
     }
   },
+  check: (reqestQuery, res) => {
+    const { username, nickname } = reqestQuery;
+    if (username && !nickname) {
+      userRepository.check('username', username, res);
+    } else if (!username && nickname) {
+      userRepository.check('nickname', nickname, res);
+    } else if (!username && !nickname) {
+      res.status(400).send('insufficient datas');
+    }
+  },
 };
 
 module.exports = userService;

@@ -13,7 +13,9 @@ router.post('/login', (req, res) => {
 });
 
 //유저 아이디, 닉네임 중복조회
-router.get('/check', (req, res) => {});
+router.get('/check', (req, res) => {
+  userService.check(req.query, res);
+});
 
 //유저 정보 변경
 router.post('/update', (req, res) => {
