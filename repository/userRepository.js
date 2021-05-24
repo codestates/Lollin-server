@@ -1,4 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 const bcrypt = require('bcrypt');
 const jwtConfig = require('../jwt/jwtConfig');
 const jwt = require('jsonwebtoken');
@@ -42,8 +43,9 @@ const userRepository = {
         const isMatched = await bcrypt.compare(password, userData.password);
         if (isMatched) {
           const payload = {
-            username: userData.username,
+            id: userData._id,
             nickname: userData.nickname,
+            type: userData.type,
           };
 
           HttpResponse.status(200).send({
@@ -73,6 +75,34 @@ const userRepository = {
         HttpResponse.status(409).send(`sorry!! ${flag} is duplicated!`);
       }
       mongoDB.close();
+    });
+  },
+  update: (id, newNickname, newPassword, HttpResponse) => {
+    const mongoDB = new MongoClient(process.env.Mongdb_url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    mongoDB.connect(async (err) => {
+      const collection = mongoDB.db('lollin').collection('users');
+      const newData = {
+        $set: {
+          nickname: '',
+          password: '',
+        },
+      };
+      newNickname
+        ? (newData.$set.nickname = newNickname)
+        : delete newData.$set.nickname;
+      newPassword
+        ? (newData.$set.password = newPassword)
+        : delete newData.$set.password;
+      collection.updateOne({ _id: ObjectID(id) }, newData, (err, res) => {
+        if (res.result.ok === 1) {
+          HttpResponse.status(200).send('successfully updated!');
+        } else {
+          HttpResponse.status(400).send(err);
+        }
+      });
     });
   },
 };

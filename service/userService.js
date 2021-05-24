@@ -36,6 +36,15 @@ const userService = {
       res.status(400).send('insufficient datas');
     }
   },
+  update: (userData, requestBody, res) => {
+    const { id, type } = userData;
+    const { nickname, password } = requestBody;
+    if (type !== 'none' && password) {
+      res.status(409).send('only none type user can password update');
+    } else {
+      userRepository.update(id, nickname, password, res);
+    }
+  },
 };
 
 module.exports = userService;

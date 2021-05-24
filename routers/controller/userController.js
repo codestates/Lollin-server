@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const userService = require('../../service/userService');
+const decode = require('../../jwt/jwtDecode');
 require('dotenv').config();
 
 //회원가입
@@ -18,9 +19,14 @@ router.get('/check', (req, res) => {
 });
 
 //유저 정보 변경
-router.post('/update', (req, res) => {
-  console.log(req.body);
-
-  res.send('user');
+router.post('/update', async (req, res) => {
+  const userData = await decode(req.headers.jwt);
+  if (userData === -2) {
+    res.send(400).send('invalid token');
+  } else if (userData === -3) {
+    res.send(400).send('expired token');
+  } else {
+    userService.update(userData, req.body, res);
+  }
 });
 module.exports = router;
