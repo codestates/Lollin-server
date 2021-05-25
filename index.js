@@ -3,7 +3,14 @@ const app = require('express')();
 const router = require('./routers/router');
 const axios = require('axios');
 const express = require('body-parser');
+const cors = require('cors');
 
+app.use(
+	cors({
+		origin: true,
+		credentials: true,
+	}),
+);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
