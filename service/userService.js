@@ -45,6 +45,9 @@ const userService = {
       userRepository.update(id, nickname, password, res);
     }
   },
+  socialLogin: (socialUserInfo, type, res) => {
+    userRepository.socialLogin(socialUserInfo, type, res);
+  },
 };
 
 module.exports = userService;
