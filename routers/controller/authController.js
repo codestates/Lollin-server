@@ -4,10 +4,6 @@ const userService = require('../../service/userService');
 
 require('dotenv').config();
 
-const google_id =
-  '833535767310-g78n1fis3a9stdh6mb2baf6p9j043di5.apps.googleusercontent.com';
-const google_secret = 'G_tcHyPMmR1odNBfGSrrHXVe';
-
 const client_id = '8lA0wX_a_7Ol1i2LsNH7';
 const client_secret = '5A1hi4u700';
 
