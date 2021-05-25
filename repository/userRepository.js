@@ -105,6 +105,57 @@ const userRepository = {
       });
     });
   },
+  socialLogin: (socialUserInfo, type, HttpResponse) => {
+    const { id, email } = socialUserInfo;
+    const mongoDB = new MongoClient(process.env.Mongdb_url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    mongoDB.connect(async (err) => {
+      const collection = mongoDB.db('lollin').collection('users');
+      const userData = await collection.findOne({ username: `${type}_${id}` });
+      if (!userData) {
+        const socialUser = {
+          username: `${type}_${id}`,
+          password: bcrypt.hashSync(process.env.Social_Password, 5),
+          email: `${email}`,
+          nickname: '',
+          type: `${type}`,
+          createdAt: new Date(),
+        };
+        collection.insertOne(socialUser);
+        const user = await collection.findOne({ username: `${type}_${id}` });
+        const payload = {
+          id: user._id,
+          nickname: user.nickname,
+          type: user.type,
+        };
+        HttpResponse.status(200).send({
+          message: 'successfully logined!!',
+          jwt: jwt.sign(payload, jwtConfig.secretKey, jwtConfig.options),
+        });
+      } else {
+        const isMatched = await bcrypt.compare(
+          process.env.Social_Password,
+          userData.password
+        );
+        if (isMatched) {
+          const payload = {
+            id: userData._id,
+            nickname: userData.nickname,
+            type: userData.type,
+          };
+          HttpResponse.status(200).send({
+            message: 'successfully logined!!',
+            jwt: jwt.sign(payload, jwtConfig.secretKey, jwtConfig.options),
+          });
+        } else {
+          HttpResponse.status(401).send('user not found or wrong password');
+        }
+      }
+      mongoDB.close();
+    });
+  },
 };
 
 module.exports = userRepository;

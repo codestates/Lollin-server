@@ -12,6 +12,7 @@ app.use('/champions', router.championsController);
 app.use('/items', router.itemsController);
 app.use('/utils', router.utilsController);
 app.use('/members', router.membersController);
+app.use('/auth', router.authContorller);
 
 let currentVersion;
 
