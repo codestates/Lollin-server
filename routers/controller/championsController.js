@@ -71,9 +71,8 @@ router.get('/detail', (req, res) => {
 				`http://ddragon.leagueoflegends.com/cdn/${version}/img/passive/${champdata.data[champId].passive.image.full}`,
 			];
 
-			let skills = champdata.data[champId].spells;
 			let passive = { id: champId + 'P', ...champdata.data[champId].passive };
-			skills.push(passive);
+			let skills = [passive, ...champdata.data[champId].spells];
 			for (let i = 0; i < 4; i++) {
 				let skillId = champdata.data[champId].spells[i];
 				imgs.push(
