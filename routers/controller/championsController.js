@@ -67,7 +67,10 @@ router.get('/detail', (req, res) => {
 			}
 			console.log('key: ', key);
 
-			let imgs = [];
+			let imgs = [
+				`http://ddragon.leagueoflegends.com/cdn/${version}/img/passive/${champdata.data[champId].passive.image.full}`,
+			];
+
 			let skills = champdata.data[champId].spells;
 			let passive = { id: champId + 'P', ...champdata.data[champId].passive };
 			skills.push(passive);
@@ -77,9 +80,7 @@ router.get('/detail', (req, res) => {
 					`http://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${skillId.id}.png`,
 				);
 			}
-			imgs.push(
-				`http://ddragon.leagueoflegends.com/cdn/${version}/img/passive/${champdata.data[champId].passive.image.full}`,
-			);
+
 			let data = {
 				id: champId,
 				img: `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_0.jpg`,
