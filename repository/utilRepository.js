@@ -13,7 +13,7 @@ const utilRepository = {
     mongoDB.connect(async (err) => {
       const collection = mongoDB.db('lollin').collection('comments');
       let scoreSum = 0;
-      const { comments } = await collection.findOne({ nickname: nickname });
+      const comments = await collection.findOne({ nickname: nickname });
       if (comments) {
         for (let i = 0; i < comments.length; i++) {
           scoreSum += await sentimentScore(comments[i]);
