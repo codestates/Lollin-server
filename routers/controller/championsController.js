@@ -69,7 +69,7 @@ router.get('/detail', (req, res) => {
 
 			let imgs = [];
 			let skills = champdata.data[champId].spells;
-			let passive = { id: 'GarenP', ...champdata.data[champId].passive };
+			let passive = { id: champId + 'P', ...champdata.data[champId].passive };
 			skills.push(passive);
 			for (let i = 0; i < 4; i++) {
 				let skillId = champdata.data[champId].spells[i];
