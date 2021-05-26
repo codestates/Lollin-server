@@ -46,17 +46,26 @@ router.get('/detail', (req, res) => {
 		.then(({ champdata, version }) => {
 			console.log('version: ', version);
 			let key = champdata.data[champId].key;
+			console.log('key before process: ', key);
+			console.log(key.length);
 			switch (key.length) {
 				case 1: {
+					console.log('this is 1');
 					key = '000' + key;
+					break;
 				}
 				case 2: {
+					console.log('this is 2');
 					key = '00' + key;
+					break;
 				}
 				case 3: {
+					console.log('this is 3');
 					key = '0' + key;
+					break;
 				}
 			}
+			console.log('key: ', key);
 
 			let imgs = [];
 			let skills = champdata.data[champId].spells;
