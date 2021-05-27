@@ -16,12 +16,9 @@ router.get('/detail', (req, res) => {
 	axios
 		.get('https://ddragon.leagueoflegends.com/api/versions.json')
 		.then((response) => {
-			console.log(response.data[0]);
 			return response.data[0];
 		})
 		.then((version) => {
-			console.log('version: ', version);
-			console.log('id: ', champId);
 			return new Promise((resolve, reject) => {
 				axios
 					.get(
@@ -31,46 +28,45 @@ router.get('/detail', (req, res) => {
 					)
 					.then((response2) => {
 						if (response2.data) {
-							console.log(response2.data);
 							resolve({ champdata: response2.data, version: version });
 						} else {
 							reject('invalid champion id');
 						}
 					})
 					.catch((err) => {
-						console.log('rejected here');
 						reject(err);
 					});
 			});
 		})
 		.then(({ champdata, version }) => {
-			console.log('version: ', version);
 			let key = champdata.data[champId].key;
 			switch (key.length) {
 				case 1: {
 					key = '000' + key;
+					break;
 				}
 				case 2: {
 					key = '00' + key;
+					break;
 				}
 				case 3: {
 					key = '0' + key;
+					break;
 				}
 			}
 
-			let imgs = [];
-			let skills = champdata.data[champId].spells;
-			let passive = { id: 'GarenP', ...champdata.data[champId].passive };
-			skills.push(passive);
+			let imgs = [
+				`http://ddragon.leagueoflegends.com/cdn/${version}/img/passive/${champdata.data[champId].passive.image.full}`,
+			];
+
+			let passive = { id: champId + 'P', ...champdata.data[champId].passive };
+			let skills = [passive, ...champdata.data[champId].spells];
 			for (let i = 0; i < 4; i++) {
 				let skillId = champdata.data[champId].spells[i];
 				imgs.push(
 					`http://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${skillId.id}.png`,
 				);
 			}
-			imgs.push(
-				`http://ddragon.leagueoflegends.com/cdn/${version}/img/passive/${champdata.data[champId].passive.image.full}`,
-			);
 			let data = {
 				id: champId,
 				img: `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_0.jpg`,
@@ -83,11 +79,17 @@ router.get('/detail', (req, res) => {
 					`https://d28xe8vt774jo5.cloudfront.net/champion-abilities/${key}/ability_${key}_E1.webm`,
 					`https://d28xe8vt774jo5.cloudfront.net/champion-abilities/${key}/ability_${key}_R1.webm`,
 				],
+				lore: champdata.data[champId].lore,
+				allytips: champdata.data[champId].allytips,
+				enemytips: champdata.data[champId].enemytips,
+				tags: champdata.data[champId].tags,
 			};
+			console.log(data);
+			console.log(champId);
+			console.log(version);
 			res.send({ data: data });
 		})
 		.catch((err) => {
-			console.log(err);
 			res.status(404).send(err);
 		});
 	// res.send('detail');

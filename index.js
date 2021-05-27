@@ -4,7 +4,8 @@ const router = require('./routers/router');
 const axios = require('axios');
 const express = require('body-parser');
 const cors = require('cors');
-
+const fs = require('fs');
+const patch = require('./patch/patchController');
 app.use(
 	cors({
 		origin: true,
@@ -22,24 +23,19 @@ app.use('/members', router.membersController);
 app.use('/recommend', router.recommendController);
 app.use('/auth', router.authContorller);
 
-let currentVersion;
+let currentVersion = fs.readFileSync('./dataVersion.txt').toString();
 
-axios
-	.get('https://ddragon.leagueoflegends.com/api/versions.json')
-	.then((res) => {
-		currentVersion = res.data[0];
-	})
-	.then(() => {
-		setInterval(() => {
-			require('./patch/patchController')(currentVersion, (version) => {
-				currentVersion = version;
-				console.log('patch occured, Current version: ' + currentVersion);
-			});
-		}, 3600000);
+setInterval(() => {
+	patch(currentVersion, (version) => {
+		currentVersion = version;
+		fs.writeFileSync('./dataVersion.txt', version);
+		console.log('patch occured, Current version: ' + currentVersion);
 	});
-
+}, 3600000);
+//3600000
 app.get('/', (req, res) => {
-	res.send('hello world');
+	let buffer = fs.readFileSync('./dataVersion.txt');
+	res.send('current version is : ' + buffer.toString());
 });
 
 app.listen(process.env.PORT, () => {
