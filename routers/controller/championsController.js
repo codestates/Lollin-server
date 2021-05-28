@@ -12,6 +12,7 @@ router.get('/all', (req, res) => {
 	});
 });
 router.get('/detail', (req, res) => {
+	//@@@@@@@@@@@@@@@@@
 	let champId = req.query.id;
 	axios
 		.get('https://ddragon.leagueoflegends.com/api/versions.json')
