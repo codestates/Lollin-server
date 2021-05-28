@@ -47,7 +47,6 @@ const userRepository = {
             nickname: userData.nickname,
             type: userData.type,
           };
-
           HttpResponse.status(200).send({
             message: 'successfully logined!!',
             jwt: jwt.sign(payload, jwtConfig.secretKey, jwtConfig.options),
