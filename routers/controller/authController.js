@@ -4,13 +4,10 @@ const userService = require('../../service/userService');
 
 require('dotenv').config();
 
-const client_id = '8lA0wX_a_7Ol1i2LsNH7';
-const client_secret = '5A1hi4u700';
-
 router.get('/naver', (req, response) => {
   const type = 'naver';
   const { code, state } = req.query;
-  const api_uri = `https://nid.naver.com/oauth2.0/token?client_id=${client_id}&client_secret=${client_secret}&grant_type=authorization_code&state=${state}&code=${code}`;
+  const api_uri = `https://nid.naver.com/oauth2.0/token?client_id=${process.env.Naver_Client_Id}&client_secret=${process.env.Naver_Client_Secret}&grant_type=authorization_code&state=${state}&code=${code}`;
   axios
     .get(api_uri)
     .then((res) => {
@@ -35,10 +32,10 @@ router.get('/kakao', (req, response) => {
     .post('https://kauth.kakao.com/oauth/token', null, {
       params: {
         grant_type: 'authorization_code',
-        client_id: 'cd4677d8a6e0305aea9a7e69cc3ee183',
-        redirect_uri: 'http://localhost:4000/auth/kakao',
+        client_id: `${process.env.KaKao_Client_Id}`,
+        redirect_uri: `${process.env.KaKao_Redirection_Uri}`,
         code: code,
-        client_secret: '6du4IJBbs04MuFoKnFdyfjQHSQdJNpz5',
+        client_secret: `${process.env.KaKao_Client_Secret}`,
       },
     })
     .then((res) => {
