@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const selectAll = require('../../service/readService');
+const select = require('../../service/findService');
 const axios = require('axios');
 const configGenerator = require('../configGenerator');
 
@@ -98,9 +99,32 @@ router.get('/detail', (req, res) => {
 router.get('/rotation', (req, res) => {
 	axios(configGenerator('rotation'))
 		.then((response) => {
-			res.status(200).send(response.data);
+			console.log('response.data: ');
+			let intIds = response.data.freeChampionIds;
+			let strIds = [];
+			for (let el of intIds) {
+				strIds.push(el.toString());
+			}
+			select('champions', { key: { $in: strIds } }, (err, result) => {
+				if (err) {
+					// console.log(err);
+					res.status(500).send(err);
+				} else {
+					let finalResult = [];
+					for (let el of result) {
+						finalResult.push({
+							id: el.id,
+							img: `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${el.id}_0.jpg`,
+						});
+					}
+					console.log(finalResult);
+					res.send(finalResult);
+				}
+			});
+			// res.status(200).send(response.data);
 		})
 		.catch((err) => {
+			console.log(err);
 			res.status(404).send(err);
 		});
 });
