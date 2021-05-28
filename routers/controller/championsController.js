@@ -1,8 +1,10 @@
 const router = require('express').Router();
+const recent = require('../../service/recentService');
 const selectAll = require('../../service/readService');
 const select = require('../../service/findService');
 const axios = require('axios');
 const configGenerator = require('../configGenerator');
+const { find } = require('cheerio/lib/api/traversing');
 
 router.get('/all', (req, res) => {
 	selectAll('champions', (err, result) => {
@@ -127,5 +129,34 @@ router.get('/rotation', (req, res) => {
 			console.log(err);
 			res.status(404).send(err);
 		});
+});
+router.get('/recent', (req, res) => {
+	recent((err, result) => {
+		if (err) {
+			console.log(err);
+			res.send(err);
+		} else {
+			// console.log(result);
+			let champIdArr = [];
+			for (let champ of result) {
+				champIdArr.push(Number(champ.key));
+			}
+			champIdArr.sort((a, b) => b - a);
+			let recentChampId = champIdArr[0].toString();
+			select('champions', { key: recentChampId }, (err, result2) => {
+				if (err) {
+					console.log(err);
+					res.send(err);
+				} else {
+					console.log(result2[0]);
+					let name = result2[0].id;
+					let key = result2[0].key;
+					let final = {};
+					final[name] = key;
+					res.send(final);
+				}
+			});
+		}
+	});
 });
 module.exports = router;
