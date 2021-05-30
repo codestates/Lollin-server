@@ -14,6 +14,12 @@ router.get('/all', (req, res) => {
 		res.status(200).send(result);
 	});
 });
+function isInteger(value) {
+	if (parseInt(value, 10).toString() === value) {
+		return true;
+	}
+	return false;
+}
 router.get('/detail', (req, res) => {
 	//@@@@@@@@@@@@@@@@@
 	let champId = req.query.id;
@@ -96,7 +102,6 @@ router.get('/detail', (req, res) => {
 		.catch((err) => {
 			res.status(404).send(err);
 		});
-	// res.send('detail');
 });
 router.get('/rotation', (req, res) => {
 	axios(configGenerator('rotation'))
@@ -159,4 +164,5 @@ router.get('/recent', (req, res) => {
 		}
 	});
 });
+
 module.exports = router;
