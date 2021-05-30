@@ -68,6 +68,37 @@ router.get('/patched', (req, res) => {
 			res.status(500).send(err);
 		});
 });
+router.get('/patched2', (req, res) => {
+	console.log('items/patched2');
+	axios
+		.get('https://ddragon.leagueoflegends.com/api/versions.json')
+		.then((response) => {
+			let currentV = response.data[0];
+			let arr = currentV.split('.');
+			let fisrtNum = arr[0];
+			let secondNum = arr[1];
+			request(
+				`https://kr.leagueoflegends.com/ko-kr/news/game-updates/patch-${fisrtNum}-${secondNum}-notes/`,
+				(err, response, html) => {
+					if (!err && response.statusCode === 200) {
+						const $ = cheerio.load(html);
+						let patchItemsHeader = $('#patch-items').parent();
+						let arr = pushItems(patchItemsHeader);
+						let arr2 = [];
+						arr.forEach((el) => arr2.push(el.html()));
+						let result = arr2.join('');
+						res.send(result);
+					} else {
+						res.status(501).send(err);
+					}
+				},
+			);
+		})
+		.catch((err) => {
+			res.status(500).send(err);
+		});
+});
+
 router.get('/versus', (req, res) => {
 	let champ1 = req.query.champ1;
 	let champ2 = req.query.champ2;
