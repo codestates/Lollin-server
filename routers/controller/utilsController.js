@@ -4,7 +4,6 @@ const configGenerator = require('../configGenerator');
 const utilRepository = require('../../repository/utilRepository');
 const select = require('../../service/findService');
 router.get('/search?', (req, res) => {
-	//   console.log(req.query);
 	axios(configGenerator('userinfo', req.query.name))
 		.then((response) => {
 			//   console.log('response.data: ');
@@ -13,8 +12,31 @@ router.get('/search?', (req, res) => {
 			axios(configGenerator('activegame', response.data.id))
 				.then((result) => {
 					//   console.log(result);
+					let matchData = result.data;
+					let champIds = [];
+					let champNames = {};
+					let participants = [...matchData.participants];
+					matchData.participants.forEach((el) => {
+						champIds.push(el.championId.toString());
+					});
+					console.log(champIds);
+					select('champions', { key: { $in: champIds } }, (err, result2) => {
+						if (err) {
+							res.status(404).send(err);
+						} else {
+							result2.forEach((champdata) => {
+								champNames[champdata.key] = champdata.id;
+							});
+							for (let participant of participants) {
+								participant.championName = champNames[participant.championId];
+							}
+							console.log(participants);
+							matchData.participants = participants;
+							res.send(matchData);
+							// utilRepository.getScore(req.query.name, matchData, res);
+						}
+					});
 					//평가 분석 API
-					utilRepository.getScore(req.query.name, result, res);
 					//res.status(200).send(result.data);
 				})
 				.catch((err) => {
