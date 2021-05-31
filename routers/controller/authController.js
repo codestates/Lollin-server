@@ -32,10 +32,10 @@ router.get('/kakao', (req, response) => {
     .post('https://kauth.kakao.com/oauth/token', null, {
       params: {
         grant_type: 'authorization_code',
-        client_id: `${process.env.KaKao_Client_Id}`,
-        redirect_uri: `${process.env.KaKao_Redirection_Uri}`,
+        client_id: `${process.env.Kakao_Client_Id}`,
+        redirect_uri: `${process.env.Kakao_Redirection_Uri}`,
         code: code,
-        client_secret: `${process.env.KaKao_Client_Secret}`,
+        client_secret: `${process.env.Kakao_Client_Secret}`,
       },
     })
     .then((res) => {
