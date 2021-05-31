@@ -5,7 +5,7 @@ require('dotenv').config();
 
 //회원가입
 router.post('/signup', (req, res) => {
-  userService.signup(req.body, res);
+ userService.signup(req.body, res);
 });
 
 //로그인
