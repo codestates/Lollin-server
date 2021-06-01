@@ -26,45 +26,16 @@ router.get('/naver', (req, response) => {
     .catch((err) => console.log(err));
 });
 
-router.get('/kakao', (req, response) => {
-  const { code } = req.query;
-  axios
-    .post('https://kauth.kakao.com/oauth/token', null, {
-      params: {
-        grant_type: 'authorization_code',
-        client_id: `${process.env.Kakao_Client_Id}`,
-        redirect_uri: `${process.env.Kakao_Redirection_Uri}`,
-        code: code,
-        client_secret: `${process.env.Kakao_Client_Secret}`,
-      },
-    })
-    .then((res) => {
-      const { access_token } = res.data;
-      axios
-        .post('https://kapi.kakao.com/v2/user/me', null, {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        })
-        .then((res) => {
-          const type = 'kakao';
-          const userData = {
-            id: res.data.id,
-            email: res.data.kakao_account.email,
-          };
-          userService.socialLogin(userData, type, response);
-        })
-        .catch((err) => console.log(err));
-      // 카카오톡 로그아웃
-      axios.post('https://kapi.kakao.com/v1/user/logout', null, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+
+router.post('/kakao', (req, response) => {
+  const type = 'kakao';
+  const userData = {
+    id: req.body.id,
+    email: req.body.email,
+  };
+  console.log(userData);
+  userService.socialLogin(userData, type, response);
+
 });
 
 module.exports = router;
