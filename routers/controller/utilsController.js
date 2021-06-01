@@ -85,8 +85,8 @@ router.get('/history', (req, res) => {
 		.then((league) => {
 			let league_solo = league.data[0];
 			let league_flex = league.data[1];
-			result['league_solo'] = league_solo;
-			result['league_flex'] = league_flex;
+			result.league_solo = league_solo;
+			result.league_flex = league_flex;
 			return new Promise(function (resolve, reject) {
 				axios(configGenerator('matchList', userData.puuid))
 					.then((matchList) => {
@@ -99,14 +99,23 @@ router.get('/history', (req, res) => {
 		})
 		.then((resmatchList) => {
 			let matchIdList = resmatchList.data;
-			result['matchList'] = matchIdList;
+			result.matchList = matchIdList;
 			let matches = [];
 			return new Promise(function (resolve, reject) {
-				getMatchRecursive(matchIdList, (err, matches) => {
+				getMatchRecursive(matchIdList, summonerName, (err, matches) => {
 					if (err) {
 						reject(err);
 					} else {
-						result['matches'] = matches;
+						let wins = 0;
+						let loses = 0;
+						matches.forEach((match) => {
+							match.win ? wins++ : loses++;
+						});
+						let winRate = wins / (wins + loses);
+						result.wins = wins;
+						result.loses = loses;
+						result.winRate = winRate;
+						result.matches = matches;
 						resolve(result);
 					}
 				});
@@ -119,12 +128,48 @@ router.get('/history', (req, res) => {
 			res.send(err);
 		});
 });
-function getMatchRecursive(matchIdList, callback, index = 0, result = []) {
+function getMatchRecursive(
+	matchIdList,
+	summonerName,
+	callback,
+	index = 0,
+	result = [],
+) {
 	if (matchIdList.length > index) {
+		console.log('recursive index: ', index);
 		axios(configGenerator('match', matchIdList[index]))
 			.then((match) => {
-				result.push(match.data);
-				getMatchRecursive(matchIdList, callback, index + 1, result);
+				let matchData = match.data.info;
+				let myData = {};
+				myData.matchId = match.data.metadata.matchId;
+				myData.gameMode = matchData.gameMode;
+				myData.gameType = matchData.gameType;
+				myData.creationTime = matchData.gameCreation;
+				myData.durationTime = matchData.gameDuration;
+				matchData.participants.forEach((participant) => {
+					if (participant.summonerName === summonerName) {
+						let kda =
+							(participant.kills + participant.assists) / participant.deaths;
+						let processedKda = Math.floor(kda * 100) / 100;
+						myData.kda = processedKda;
+						myData.win = participant.win;
+						myData.championName = participant.championName;
+						myData.championId = participant.championId;
+						myData.lane = participant.lane;
+						myData.doubleKills = participant.doubleKills;
+						myData.tripleKills = participant.tripleKills;
+						myData.quadraKills = participant.quadraKills;
+						myData.pentaKills = participant.pentaKills;
+					}
+				});
+				result.push(myData);
+				getMatchRecursive(
+					matchIdList,
+					summonerName,
+					callback,
+					index + 1,
+					result,
+				);
 			})
 			.catch((err) => {
 				callback(err, result);
