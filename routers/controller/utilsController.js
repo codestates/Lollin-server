@@ -100,7 +100,6 @@ router.get('/history', (req, res) => {
 		.then((resmatchList) => {
 			let matchIdList = resmatchList.data;
 			result.matchList = matchIdList;
-			let matches = [];
 			return new Promise(function (resolve, reject) {
 				getMatchRecursive(matchIdList, summonerName, (err, matches) => {
 					if (err) {
@@ -155,7 +154,7 @@ function getMatchRecursive(
 						myData.win = participant.win;
 						myData.championName = participant.championName;
 						myData.championId = participant.championId;
-						myData.lane = participant.lane;
+						myData.lane = participant.individualPosition;
 						myData.doubleKills = participant.doubleKills;
 						myData.tripleKills = participant.tripleKills;
 						myData.quadraKills = participant.quadraKills;
