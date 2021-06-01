@@ -3,7 +3,7 @@ const axios = require('axios');
 const configGenerator = require('../configGenerator');
 const utilRepository = require('../../repository/utilRepository');
 const select = require('../../service/findService');
-router.get('/search?', (req, res) => {
+router.get('/activeGame?', (req, res) => {
 	axios(configGenerator('userinfo', req.query.name))
 		.then((response) => {
 			//   console.log('response.data: ');
