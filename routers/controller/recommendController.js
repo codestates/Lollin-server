@@ -51,7 +51,7 @@ router.get('/item', (req, res) => {
 		res.status(400).send('please type in correct champion');
 	}
 });
-router.get('/runes', (req, res) => {
+router.get('/build', (req, res) => {
 	let champ1 = req.query.champ1;
 	let champ2 = req.query.champ2;
 	if (champ1 && champ2) {
