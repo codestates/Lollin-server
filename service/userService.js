@@ -48,6 +48,10 @@ const userService = {
   socialLogin: (socialUserInfo, type, res) => {
     userRepository.socialLogin(socialUserInfo, type, res);
   },
+  delete: (userData, res) => {
+    const id = userData.id;
+    userRepository.delete(id, res);
+  },
 };
 
 module.exports = userService;
