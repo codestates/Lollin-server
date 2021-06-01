@@ -42,7 +42,8 @@ const userService = {
     if (type !== 'none' && password) {
       res.status(409).send('only none type user can password update');
     } else {
-      userRepository.update(id, nickname, password, res);
+      const bcryptedPassword = bcrypt.hashSync(password, 5);
+      userRepository.update(id, nickname, bcryptedPassword, res);
     }
   },
   socialLogin: (socialUserInfo, type, res) => {
