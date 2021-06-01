@@ -93,7 +93,7 @@ const userRepository = {
         ? (newData.$set.nickname = newNickname)
         : delete newData.$set.nickname;
       newPassword
-        ? (newData.$set.password = newPassword)
+        ? (newData.$set.password = bcrypt.hashSync(newPassword, 5))
         : delete newData.$set.password;
       collection.updateOne({ _id: ObjectID(id) }, newData, (err, res) => {
         if (res.result.ok === 1) {
