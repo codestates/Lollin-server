@@ -6,6 +6,7 @@ const express = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const patch = require('./patch/patchController');
+const configGenerator = require('./routers/configGenerator');
 app.use(
 	cors({
 		origin: true,
@@ -33,11 +34,21 @@ setInterval(() => {
 	});
 }, 3600000);
 //3600000
+
 app.get('/', (req, res) => {
 	let buffer = fs.readFileSync('./dataVersion.txt');
-	res.send('current version is : ' + buffer.toString());
+	let token = fs.readFileSync('./riotAPI.txt');
+	res.send({ currentVersion: buffer.toString(), riotToken: token.toString() });
+});
+app.get('/setToken', (req, res) => {
+	let newToken = req.query.token;
+	fs.writeFileSync('./riotAPI.txt', newToken);
+	let buffer = fs.readFileSync('./riotAPI.txt');
+	configGenerator('tokenSet', newToken);
+	res.send('token changed. new Token: ' + buffer.toString());
 });
 
 app.listen(process.env.PORT, () => {
 	console.log(`server is listening ${process.env.PORT}`);
+	configGenerator('tokenSet', fs.readFileSync('./riotAPI.txt').toString());
 });
