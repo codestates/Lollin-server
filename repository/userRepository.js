@@ -155,6 +155,23 @@ const userRepository = {
       mongoDB.close();
     });
   },
+  delete: (id, res) => {
+    const mongoDB = new MongoClient(process.env.Mongdb_url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    mongoDB.connect(async (err) => {
+      const collection = mongoDB.db('lollin').collection('users');
+      const result = await collection.deleteOne({ _id: ObjectID(id) });
+      console.log(result);
+      mongoDB.close();
+      if (result.deletedCount) {
+        res.status(200).send('successfully deleted');
+      } else {
+        res.status(404).send('user not founded');
+      }
+    });
+  },
 };
 
 module.exports = userRepository;
