@@ -26,7 +26,6 @@ router.get('/naver', (req, response) => {
     .catch((err) => console.log(err));
 });
 
-
 router.post('/kakao', (req, response) => {
   const type = 'kakao';
   const userData = {
@@ -35,7 +34,6 @@ router.post('/kakao', (req, response) => {
   };
   console.log(userData);
   userService.socialLogin(userData, type, response);
-
 });
 
 module.exports = router;
