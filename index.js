@@ -47,7 +47,10 @@ app.get('/setToken', (req, res) => {
 	configGenerator('tokenSet', newToken);
 	res.send('token changed. new Token: ' + buffer.toString());
 });
-
+app.get('/riot.txt', (req, res) => {
+	let buffer = fs.readFileSync('./riot.txt');
+	res.send(buffer.toString());
+});
 app.listen(process.env.PORT, () => {
 	console.log(`server is listening ${process.env.PORT}`);
 	configGenerator('tokenSet', fs.readFileSync('./riotAPI.txt').toString());
