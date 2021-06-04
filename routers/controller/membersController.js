@@ -5,9 +5,9 @@ const decode = require('../../jwt/jwtDecode');
 router.post('/comment', (req, res) => {
   const userData = await decode(req.body.jwt);
   if (userData === -2) {
-    res.send(400).send('invalid token');
+    res.status(400).send('invalid token');
   } else if (userData === -3) {
-    res.send(400).send('expired token');
+    res.status(400).send('expired token');
   } else {
     memberService.makeComment(req, res);
   }
