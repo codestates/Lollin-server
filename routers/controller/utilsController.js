@@ -179,6 +179,28 @@ function getMatchRecursive(
 		callback(null, result);
 	}
 }
+router.get('/lightInfo', (req, res) => {
+	let summonerName = req.query.name;
+	axios(configGenerator('userinfo', summonerName))
+		.then((resUserInfo) => {
+			let userInfo = resUserInfo.data;
+			return new Promise((resolve, reject) => {
+				axios(configGenerator('league', userInfo.id))
+					.then((resLeague) => {
+						resolve(resLeague.data);
+					})
+					.catch((err) => {
+						reject(err);
+					});
+			});
+		})
+		.then((leagueInfo) => {
+			res.send(leagueInfo);
+		})
+		.catch((err) => {
+			res.status(404).send(err);
+		});
+});
 router.get('/rotation', (req, res) => {
 	axios(configGenerator('rotation'))
 		.then((response) => {
