@@ -56,6 +56,7 @@ router.get('/history', (req, res) => {
 	let summonerName = req.query.name;
 	let useData;
 	let result = {};
+	console.log('query.name: ');
 	console.log(summonerName);
 	//@@@@@@@@@@@@@@@@@@@@@@@@@league
 	axios(configGenerator('userinfo', summonerName))
@@ -136,6 +137,7 @@ function getMatchRecursive(
 ) {
 	if (matchIdList.length > index) {
 		console.log('recursive index: ', index);
+		console.log('matchId: ', matchIdList[index]);
 		axios(configGenerator('match', matchIdList[index]))
 			.then((match) => {
 				let matchData = match.data.info;
@@ -171,11 +173,15 @@ function getMatchRecursive(
 				);
 			})
 			.catch((err) => {
-				callback(err, result);
+				getMatchRecursive(
+					matchIdList,
+					summonerName,
+					callback,
+					index + 1,
+					result,
+				);
 			});
 	} else {
-		console.log('recursive end. result: ');
-		console.log(result);
 		callback(null, result);
 	}
 }
