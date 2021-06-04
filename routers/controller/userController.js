@@ -22,9 +22,9 @@ router.get('/check', (req, res) => {
 router.post('/update', async (req, res) => {
   const userData = await decode(req.body.jwt);
   if (userData === -2) {
-    res.send(400).send('invalid token');
+    res.status(400).send('invalid token');
   } else if (userData === -3) {
-    res.send(400).send('expired token');
+    res.status(400).send('expired token');
   } else {
     userService.update(userData, req.body, res);
   }
@@ -33,9 +33,9 @@ router.post('/update', async (req, res) => {
 router.post('/delete', async (req, res) => {
   const userData = await decode(req.body.jwt);
   if (userData === -2) {
-    res.send(400).send('invalid token');
+    res.status(400).send('invalid token');
   } else if (userData === -3) {
-    res.send(400).send('expired token');
+    res.status(400).send('expired token');
   } else {
     userService.delete(userData, res);
   }
