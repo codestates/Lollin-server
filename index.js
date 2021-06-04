@@ -31,9 +31,37 @@ setInterval(() => {
 		currentVersion = version;
 		fs.writeFileSync('./dataVersion.txt', version);
 		console.log('patch occured, Current version: ' + currentVersion);
+		setRunesJson(currentVersion);
 	});
 }, 3600000);
 //3600000
+function setRunesJson(version) {
+	axios
+		.get(
+			`http://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/runesReforged.json`,
+		)
+		.then((resAllrunes) => {
+			let runes = resAllrunes.data;
+			const setNewRunes = (newRunes = []) => {
+				for (let keyStone of runes) {
+					let newKeyStone = {
+						id: keyStone.id,
+						key: keyStone.key,
+						icon: keyStone.icon,
+						name: keyStone.iCon,
+					};
+					newRunes.push(newKeyStone);
+					for (let slot of keyStone.slots) {
+						for (let rune of slot.runes) {
+							newRunes.push(rune);
+						}
+					}
+				}
+				return newRunes;
+			};
+			fs.writeFileSync('./runes.json', JSON.stringify(setNewRunes()));
+		});
+}
 
 app.get('/', (req, res) => {
 	let buffer = fs.readFileSync('./dataVersion.txt');
@@ -51,7 +79,27 @@ app.get('/riot.txt', (req, res) => {
 	let buffer = fs.readFileSync('./riot.txt');
 	res.send(buffer.toString());
 });
+app.get('/rune', (req, res) => {
+	let rawData = fs.readFileSync('./runes.json').toString();
+	let jsons = JSON.parse(rawData);
+	if (req.query.id) {
+		let id = Number(req.query.id);
+		console.log(id);
+		for (let json of jsons) {
+			if (json.id === id) {
+				json.icon = `https://ddragon.leagueoflegends.com/cdn/img/${json.icon}`;
+				res.json(json);
+				return;
+			}
+		}
+		res.send('no such rune');
+	} else {
+		res.json(jsons);
+	}
+});
+
 app.listen(process.env.PORT, () => {
 	console.log(`server is listening ${process.env.PORT}`);
 	configGenerator('tokenSet', fs.readFileSync('./riotAPI.txt').toString());
+	setRunesJson(currentVersion);
 });
