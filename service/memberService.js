@@ -2,25 +2,13 @@ const memberRepository = require('../repository/memberRepository');
 
 const memberService = {
   makeComment: (req, res) => {
-    const { members } = req.body;
-    let datas = [];
-    if (members) {
-      for (let i = 0; i < members.length; i++) {
-        if (members[i].comment) {
-          const data = {
-            nickname: members[i].summonerName,
-            comment: members[i].comment,
-          };
-          datas.push(data);
-        }
-      }
-    }
-    let mongodb;
-    datas.forEach((data) => {
-      mongodb = memberRepository.makeComment(data);
-    });
-    mongodb.close();
-    res.status(200).send('comments updated!');
+    const { nickname, comment } = req.body.data;
+    // const { nickname, comment } = req;
+    memberRepository.makeComment(nickname, comment, res);
+    memberRepository.setScore(nickname);
+  },
+  getScore: (nickname, res) => {
+    memberRepository.getScore(nickname, res);
   },
 };
 module.exports = memberService;
