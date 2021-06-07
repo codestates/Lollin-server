@@ -26,8 +26,8 @@ const configGenerator = function (apiType, param) {
 		}
 		case 'userinfo': {
 			console.log('param: ', param);
-			//   console.log('encode url');
-			//   console.log(encodeURI(param));
+			console.log('encode url');
+			console.log(encodeURI(param));
 			return {
 				method: 'get',
 				url: `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodeURI(
