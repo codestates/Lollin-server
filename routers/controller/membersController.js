@@ -14,7 +14,8 @@ router.post('/comment', async (req, res) => {
 });
 
 router.get('/score',(req,res)=>{
-  const {nickname} = req.query
-  memberService.getScroe(nickname,res)
+	console.log(req.query); 
+ const {nickname} = req.query
+  memberService.getScore(nickname,res)
 })
 module.exports = router;

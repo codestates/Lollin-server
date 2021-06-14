@@ -5,7 +5,7 @@ const memberService = {
     const { nickname, comment } = req.body;
     // const { nickname, comment } = req;
     memberRepository.makeComment(nickname, comment, res);
-    memberRepository.setScore(nickname);
+   
   },
   getScore: (nickname, res) => {
     memberRepository.getScore(nickname, res);
