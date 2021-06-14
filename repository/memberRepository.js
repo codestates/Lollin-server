@@ -4,7 +4,8 @@ require('dotenv').config();
 
 const memberRepository = {
   makeComment: (nickname, comment, HttpResponse) => {
-    const options = { upsert: true };
+	console.log(nickname,comment);   
+ const options = { upsert: true };
     const query = { nickname: nickname };
     const update = { $push: { comments: comment } };
     const mongoDB = new MongoClient(process.env.Mongdb_url, {
@@ -13,23 +14,37 @@ const memberRepository = {
     });
     mongoDB.connect(async (err) => {
       const collection = mongoDB.db('lollin').collection('comments');
-      collection.updateOne(query, update, options);
+      const collection2 = mongoDB.db('lollin').collection('score');
+     const result = await sentimentScore(comment);
+      const score = result[0].documentSentiment.score; 
+ collection.updateOne(query, update, options);
+ collection2.updateOne(query, { $push: { score: score } }, options);
       if (err) {
-        //HttpResponse.status(500).send('err');
+      HttpResponse.status(500).send('err');
       }
     });
     mongoDB.close();
-    //HttpResponse.status(200).send('successfully updated!');
+  HttpResponse.status(200).send('successfully updated!');
   },
-  getScore: (nickname, HttpResponse) => {
-    const mongoDB = new MongoClient(process.env.Mongdb_url, {
+  getScore: (nickname, HttpResponse) => {   
+ const mongoDB = new MongoClient(process.env.Mongdb_url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     mongoDB.connect(async (err) => {
-      const collection = mongoDB.db('lollin').collection('score');
-      const { score } = await collection.findOne({ nickname: nickname });
-      let result = '';
+      const collection = mongoDB.db('lollin').collection('score');    
+      const data = { nickname: nickname };
+      const sco = await collection.findOne(data);
+      let score = 0;
+      if (!sco) {
+        score = null;
+      } else {
+        sco.score.forEach((point) => {
+          score += point;
+        });
+        score = Number((score / sco.score.length).toFixed(2));
+      }
+ let result = '';
       if (score > 0.6 && score <= 1) {
         result = 'so good';
       } else if (score > 0.2 && score <= 0.6) {
@@ -43,7 +58,7 @@ const memberRepository = {
       } else {
         result = '평가 기록이 없습니다';
       }
-      if (!score) {
+      if (score===null) {
         HttpResponse.status(200).send({
           score: '평가 기록이 없습니다.',
           result: result,
@@ -53,30 +68,6 @@ const memberRepository = {
       }
       if (err) console.error(err);
     });
-  },
-  setScore: (nickname) => {
-    const mongoDB = new MongoClient(process.env.Mongdb_url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    mongoDB.connect(async (err) => {
-      const commentsCollection = mongoDB.db('lollin').collection('comments');
-      const scoreCollection = mongoDB.db('lollin').collection('score');
-      const { comments } = await commentsCollection.findOne({
-        nickname: nickname,
-      });
-      let score = 0;
-      // 배포전에 주석 풀어야함
-      // comments.forEach((comment) => {
-      //   score += sentimentScore(comment);
-      // });
-      const options = { upsert: true };
-      const query = { nickname: nickname };
-      const data = { score: score };
-      const update = { $set: data };
-      scoreCollection.updateOne(query, update, options);
-    });
-    mongoDB.close();
   },
 };
 
