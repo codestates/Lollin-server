@@ -3,15 +3,13 @@ const axios = require('axios');
 const configGenerator = require('../configGenerator');
 const utilRepository = require('../../repository/utilRepository');
 const select = require('../../service/findService');
+const request = require('request');
+const cheerio = require('cheerio');
 router.get('/activeGame?', (req, res) => {
 	axios(configGenerator('userinfo', req.query.name))
 		.then((response) => {
-			//   console.log('response.data: ');
-			//   console.log(response.data);
-
 			axios(configGenerator('activegame', response.data.id))
 				.then((result) => {
-					//   console.log(result);
 					let matchData = result.data;
 					let champIds = [];
 					let champNames = {};
@@ -33,11 +31,8 @@ router.get('/activeGame?', (req, res) => {
 							console.log(participants);
 							matchData.participants = participants;
 							res.send(matchData);
-							// utilRepository.getScore(req.query.name, matchData, res);
 						}
 					});
-					//평가 분석 API
-					//res.status(200).send(result.data);
 				})
 				.catch((err) => {
 					//   console.log(err);
@@ -62,15 +57,6 @@ router.get('/history', (req, res) => {
 	axios(configGenerator('userinfo', summonerName))
 		.then((responseUser) => {
 			userData = responseUser.data;
-			// {
-			// 	"id": "vj052uluJBGr0T98C6NQulIiG7LdV1Nq7uaU1Gios_4s0aE",
-			// 	"accountId": "UeDOp-F8f2bQGD_11wlpFeti3AIzN8KhmWfUnD9j2AfCNYI",
-			// 	"puuid": "tPQWbTJkAmMfsIUara4UToRI1ojidzJ7Ck423IclNfUzXlMaBRXuAGL4U5iECxbSU2lVvUiBA68g-w",
-			// 	"name": "꼬우면15서렌쳐",
-			// 	"profileIconId": 4881,
-			// 	"revisionDate": 1621889064000,
-			// 	"summonerLevel": 330
-			//   }
 			console.log('user Data: ');
 			console.log(userData);
 			return new Promise(function (resolve, reject) {
@@ -136,8 +122,6 @@ function getMatchRecursive(
 	result = [],
 ) {
 	if (matchIdList.length > index) {
-		console.log('recursive index: ', index);
-		console.log('matchId: ', matchIdList[index]);
 		axios(configGenerator('match', matchIdList[index]))
 			.then((match) => {
 				let matchData = match.data.info;
@@ -217,6 +201,7 @@ router.get('/rotation', (req, res) => {
 		});
 });
 router.get('/featured', (req, res) => {
+	console.log('this is featured');
 	axios(configGenerator('featured'))
 		.then((response) => {
 			let matchData = response.data.gameList[0];
@@ -226,7 +211,6 @@ router.get('/featured', (req, res) => {
 			matchData.participants.forEach((el) => {
 				champIds.push(el.championId.toString());
 			});
-			console.log(champIds);
 			select('champions', { key: { $in: champIds } }, (err, result) => {
 				if (err) {
 					res.status(404).send(err);
@@ -237,7 +221,6 @@ router.get('/featured', (req, res) => {
 					for (let participant of participants) {
 						participant.championName = champNames[participant.championId];
 					}
-					console.log(participants);
 					matchData.participants = participants;
 					res.status(200).send(matchData);
 				}
@@ -247,5 +230,38 @@ router.get('/featured', (req, res) => {
 			res.status(404).send(err);
 		});
 });
-
+router.get('/patchnote', (req, res) => {
+	axios(configGenerator('version'))
+		.then((resVersion) => {
+			console.log(resVersion);
+			let version = resVersion.data[0];
+			let firstNum = version.split('.')[0];
+			let secondNum = version.split('.')[1];
+			return new Promise((resolve, reject) => {
+				request(
+					configGenerator('patchnote', {
+						firstNum: firstNum,
+						secondNum: secondNum,
+					}),
+					(err, response, html) => {
+						if (!err && response.statusCode === 200) {
+							resolve(html);
+						} else {
+							reject(err);
+						}
+					},
+				);
+			});
+		})
+		.then((html) => {
+			const $ = cheerio.load(html);
+			let patchHighlight = $('a.cboxElement');
+			let url = patchHighlight.attr('href');
+			console.log(url);
+			res.send(url);
+		})
+		.catch((err) => {
+			res.send(err);
+		});
+});
 module.exports = router;

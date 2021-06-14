@@ -115,6 +115,15 @@ const configGenerator = function (apiType, param) {
 				},
 			};
 		}
+		case 'version': {
+			return {
+				method: 'get',
+				url: 'https://ddragon.leagueoflegends.com/api/versions.json',
+			};
+		}
+		case 'patchnote': {
+			return `https://kr.leagueoflegends.com/ko-kr/news/game-updates/patch-${param.firstNum}-${param.secondNum}-notes/`;
+		}
 		default: {
 			break;
 		}

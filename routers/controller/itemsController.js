@@ -3,6 +3,8 @@ const selectAll = require('../../service/readService');
 const request = require('request');
 const cheerio = require('cheerio');
 const axios = require('axios');
+const configGenerator = require('../configGenerator');
+const { version } = require('mongoose');
 router.get('/all', (req, res) => {
 	selectAll('items', (err, result) => {
 		if (err) {
@@ -20,84 +22,84 @@ function pushItems(item, arr = []) {
 		return arr;
 	}
 }
-router.get('/patched', (req, res) => {
-	axios
-		.get('https://ddragon.leagueoflegends.com/api/versions.json')
-		.then((response) => {
-			let currentV = response.data[0];
-			let arr = currentV.split('.');
-			let fisrtNum = arr[0];
-			let secondNum = arr[1];
-			request(
-				`https://kr.leagueoflegends.com/ko-kr/news/game-updates/patch-${fisrtNum}-${secondNum}-notes/`,
-				(err, response, html) => {
-					if (!err && response.statusCode === 200) {
-						const $ = cheerio.load(html);
-						let patchItemsHeader = $('#patch-items').parent();
-						let arr = pushItems(patchItemsHeader);
-						let items = [];
+// router.get('/patched', (req, res) => {
+// 	axios
+// 		(configGenerator('version'))
+// 		.then((response) => {
+// 			let currentV = response.data[0];
+// 			let arr = currentV.split('.');
+// 			let fisrtNum = arr[0];
+// 			let secondNum = arr[1];
+// 			request(
+// 				`https://kr.leagueoflegends.com/ko-kr/news/game-updates/patch-${fisrtNum}-${secondNum}-notes/`,
+// 				(err, response, html) => {
+// 					if (!err && response.statusCode === 200) {
+// 						const $ = cheerio.load(html);
+// 						let patchItemsHeader = $('#patch-items').parent();
+// 						let arr = pushItems(patchItemsHeader);
+// 						let items = [];
 
-						for (let i = 0; i < arr.length; i++) {
-							let item = arr[i].find('h3:eq(0)').text();
-							let explain = arr[i].find('blockquote:eq(0)');
-							let contentNum = explain.nextAll('.attribute-change').length;
-							let contents = [];
-							for (let j = 0; j < contentNum; j++) {
-								let str = arr[i]
-									.find(`.attribute-change:eq(${j})`)
-									.text()
-									.replace(/[\r\n\t]/g, '');
-								contents.push(str);
-							}
-							let img = arr[i].find('img:eq(0)').attr('src');
-							items.push({
-								item: item,
-								explain: explain.text().replace(/[\r\n\t]/g, ''),
-								contents: contents,
-								img: img,
-							});
-						}
-						res.send({ data: items });
-					} else {
-						res.status(501).send(err);
-					}
-				},
-			);
-		})
-		.catch((err) => {
-			res.status(500).send(err);
-		});
-});
-router.get('/patched2', (req, res) => {
-	console.log('items/patched2');
-	axios
-		.get('https://ddragon.leagueoflegends.com/api/versions.json')
-		.then((response) => {
-			let currentV = response.data[0];
-			let arr = currentV.split('.');
-			let fisrtNum = arr[0];
-			let secondNum = arr[1];
-			request(
-				`https://kr.leagueoflegends.com/ko-kr/news/game-updates/patch-${fisrtNum}-${secondNum}-notes/`,
-				(err, response, html) => {
-					if (!err && response.statusCode === 200) {
-						const $ = cheerio.load(html);
-						let patchItemsHeader = $('#patch-items').parent();
-						let arr = pushItems(patchItemsHeader);
-						let arr2 = [];
-						arr.forEach((el) => arr2.push(el.html()));
-						let result = arr2.join('');
-						res.send(result);
-					} else {
-						res.status(501).send(err);
-					}
-				},
-			);
-		})
-		.catch((err) => {
-			res.status(500).send(err);
-		});
-});
+// 						for (let i = 0; i < arr.length; i++) {
+// 							let item = arr[i].find('h3:eq(0)').text();
+// 							let explain = arr[i].find('blockquote:eq(0)');
+// 							let contentNum = explain.nextAll('.attribute-change').length;
+// 							let contents = [];
+// 							for (let j = 0; j < contentNum; j++) {
+// 								let str = arr[i]
+// 									.find(`.attribute-change:eq(${j})`)
+// 									.text()
+// 									.replace(/[\r\n\t]/g, '');
+// 								contents.push(str);
+// 							}
+// 							let img = arr[i].find('img:eq(0)').attr('src');
+// 							items.push({
+// 								item: item,
+// 								explain: explain.text().replace(/[\r\n\t]/g, ''),
+// 								contents: contents,
+// 								img: img,
+// 							});
+// 						}
+// 						res.send({ data: items });
+// 					} else {
+// 						res.status(501).send(err);
+// 					}
+// 				},
+// 			);
+// 		})
+// 		.catch((err) => {
+// 			res.status(500).send(err);
+// 		});
+// });
+// router.get('/patched2', (req, res) => {
+// 	console.log('items/patched2');
+// 	axios
+// 		(configGenerator('version'))
+// 		.then((response) => {
+// 			let currentV = response.data[0];
+// 			let arr = currentV.split('.');
+// 			let fisrtNum = arr[0];
+// 			let secondNum = arr[1];
+// 			request(
+// 				`https://kr.leagueoflegends.com/ko-kr/news/game-updates/patch-${fisrtNum}-${secondNum}-notes/`,
+// 				(err, response, html) => {
+// 					if (!err && response.statusCode === 200) {
+// 						const $ = cheerio.load(html);
+// 						let patchItemsHeader = $('#patch-items').parent();
+// 						let arr = pushItems(patchItemsHeader);
+// 						let arr2 = [];
+// 						arr.forEach((el) => arr2.push(el.html()));
+// 						let result = arr2.join('');
+// 						res.send(result);
+// 					} else {
+// 						res.status(501).send(err);
+// 					}
+// 				},
+// 			);
+// 		})
+// 		.catch((err) => {
+// 			res.status(500).send(err);
+// 		});
+// });
 
 router.get('/versus', (req, res) => {
 	let champ1 = req.query.champ1;

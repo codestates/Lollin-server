@@ -25,6 +25,12 @@ app.use('/recommend', router.recommendController);
 app.use('/auth', router.authContorller);
 
 let currentVersion = fs.readFileSync('./dataVersion.txt').toString();
+patch(currentVersion, (version) => {
+	currentVersion = version;
+	fs.writeFileSync('./dataVersion.txt', version);
+	console.log('patch occured, Current version: ' + currentVersion);
+	setRunesJson(currentVersion);
+});
 
 setInterval(() => {
 	patch(currentVersion, (version) => {
@@ -57,86 +63,6 @@ function setRunesJson(version) {
 						}
 					}
 				}
-				// {
-				// 	"id": 5002,
-				// 	"name": "Armor",
-				// 	"majorChangePatchVersion": "",
-				// 	"tooltip": "+6 Armor",
-				// 	"shortDesc": "+6 Armor",
-				// 	"longDesc": "+6 Armor",
-				// 	"iconPath": "/lol-game-data/assets/v1/perk-images/StatMods/StatModsArmorIcon.png",
-				// 	"endOfGameStatDescs": [
-
-				// 	]
-				//   },
-				// {
-				// 	"id": 5008,
-				// 	"name": "Adaptive",
-				// 	"majorChangePatchVersion": "",
-				// 	"tooltip": "<scaleAD>+@f2@ Attack Damage</scaleAD>",
-				// 	"shortDesc": "+9 <lol-uikit-tooltipped-keyword key='LinkTooltip_Description_Adaptive'><font color='#48C4B7'>Adaptive Force</font></lol-uikit-tooltipped-keyword>",
-				// 	"longDesc": "+9 <lol-uikit-tooltipped-keyword key='LinkTooltip_Description_Adaptive'><font color='#48C4B7'>Adaptive Force</font></lol-uikit-tooltipped-keyword>",
-				// 	"iconPath": "/lol-game-data/assets/v1/perk-images/StatMods/StatModsAdaptiveForceIcon.png",
-				// 	"endOfGameStatDescs": [
-
-				// 	]
-				//   },
-				// {
-				// 	"id": 5001,
-				// 	"name": "HealthScaling",
-				// 	"majorChangePatchVersion": "",
-				// 	"tooltip": "+@f1@ Health (based on level)",
-				// 	"shortDesc": "+15-90 Health (based on level)",
-				// 	"longDesc": "+15-90 Health (based on level)",
-				// 	"iconPath": "/lol-game-data/assets/v1/perk-images/StatMods/StatModsHealthScalingIcon.png",
-				// 	"endOfGameStatDescs": [
-
-				// 	]
-				//   },
-				// {
-				// 	"id": 5007,
-				// 	"name": "CDRScaling",
-				// 	"majorChangePatchVersion": "",
-				// 	"tooltip": "+@f1@ Ability Haste",
-				// 	"shortDesc": "+8 <lol-uikit-tooltipped-keyword key='LinkTooltip_Description_CDR'>Ability Haste</lol-uikit-tooltipped-keyword> ",
-				// 	"longDesc": "+8 <lol-uikit-tooltipped-keyword key='LinkTooltip_Description_CDR'>Ability Haste</lol-uikit-tooltipped-keyword> ",
-				// 	"iconPath": "/lol-game-data/assets/v1/perk-images/StatMods/StatModsCDRScalingIcon.png",
-				// 	"endOfGameStatDescs": [
-
-				// 	]
-				//   },
-				//   {
-				// 	"id": 5005,
-				// 	"name": "AttackSpeed",
-				// 	"majorChangePatchVersion": "",
-				// 	"tooltip": "+10% Attack Speed",
-				// 	"shortDesc": "+10% Attack Speed",
-				// 	"longDesc": "+10% Attack Speed",
-				// 	"iconPath": "/lol-game-data/assets/v1/perk-images/StatMods/StatModsAttackSpeedIcon.png",
-				// 	"endOfGameStatDescs": [
-
-				// 	]
-				//   },
-				//   {
-				// 	"id": 5003,
-				// 	"name": "MagicRes",
-				// 	"majorChangePatchVersion": "",
-				// 	"tooltip": "+8 Magic Resist",
-				// 	"shortDesc": "+8 Magic Resist",
-				// 	"longDesc": "+8 Magic Resist",
-				// 	"iconPath": "/lol-game-data/assets/v1/perk-images/StatMods/StatModsMagicResIcon.png",
-				// 	"endOfGameStatDescs": [
-
-				// 	]
-				//   },
-				// {
-				// 	"id": 9923,
-				// 	"key": "HailOfBlades",
-				// 	"icon": "perk-images/Styles/Domination/HailOfBlades/HailOfBlades.png",
-				// 	"name": "칼날비",
-				// 	"shortDesc": "적 챔피언에 대한 첫 공격 3회 동안 공격 속도 대폭 증가",
-				// 	"longDesc": "적 챔피언에 대한 3번째 공격까지 공격 속도가 110% 증가합니다.<br><br>3초 안에 다음 공격을 가하지 못하면 효과가 사라집니다.<br><br>재사용 대기시간: 12초<br><br><rules>기본 공격 모션이 취소될 경우 공격 속도 증가 효과가 적용되는 공격 횟수가 1회 늘어납니다.<br>일시적으로 최고 공격 속도 제한을 초과할 수 있습니다.</rules>"
-				//   }
 				let makeStats = (id, key, icon, name, shortDesc, longDesc) => {
 					return {
 						id: id,
