@@ -79,7 +79,7 @@ router.get('/detail', (req, res) => {
 			}
 			let data = {
 				id: champId,
-				img: `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_0.jpg`,
+				img: `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_0.jpg`,
 				skills: skills,
 				skillsimg: imgs,
 				skillwebm: [
