@@ -16,7 +16,7 @@ const getVersion = function (currenctVersion, callback) {
 const patch = function (version) {
 	axios
 		.get(
-			`http://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/item.json`,
+			`https://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/item.json`,
 		)
 		.then((response) => {
 			let datas = response.data.data;
@@ -32,7 +32,7 @@ const patch = function (version) {
 		});
 	axios
 		.get(
-			`http://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/champion.json`,
+			`https://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/champion.json`,
 		)
 		.then((response) => {
 			let datas = response.data.data;
