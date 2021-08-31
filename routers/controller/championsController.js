@@ -32,7 +32,7 @@ router.get('/detail', (req, res) => {
 			return new Promise((resolve, reject) => {
 				axios
 					.get(
-						`http://ddragon.leagueoflegends.com/cdn/${encodeURI(
+						`https://ddragon.leagueoflegends.com/cdn/${encodeURI(
 							version,
 						)}/data/ko_KR/champion/${encodeURI(champId)}.json`,
 					)
@@ -66,7 +66,7 @@ router.get('/detail', (req, res) => {
 			}
 
 			let imgs = [
-				`http://ddragon.leagueoflegends.com/cdn/${version}/img/passive/${champdata.data[champId].passive.image.full}`,
+				`https://ddragon.leagueoflegends.com/cdn/${version}/img/passive/${champdata.data[champId].passive.image.full}`,
 			];
 
 			let passive = { id: champId + 'P', ...champdata.data[champId].passive };
@@ -74,7 +74,7 @@ router.get('/detail', (req, res) => {
 			for (let i = 0; i < 4; i++) {
 				let skillId = champdata.data[champId].spells[i];
 				imgs.push(
-					`http://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${skillId.id}.png`,
+					`https://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${skillId.id}.png`,
 				);
 			}
 			let data = {
@@ -131,7 +131,7 @@ router.get('/rotation', (req, res) => {
 					for (let el of result) {
 						finalResult.push({
 							id: el.id,
-							img: `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${el.id}_0.jpg`,
+							img: `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${el.id}_0.jpg`,
 						});
 					}
 					console.log(finalResult);
