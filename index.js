@@ -38,7 +38,7 @@ setInterval(() => {
 function setRunesJson(version) {
 	axios
 		.get(
-			`http://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/runesReforged.json`,
+			`https://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/runesReforged.json`,
 		)
 		.then((resAllrunes) => {
 			let runes = resAllrunes.data;
