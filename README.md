@@ -42,7 +42,7 @@
 #### Server :  https://github.com/codestates/Lollin-server
 
 ## Link
-https://lollin.link
+https://lollin.live
 
 # About Lollin
 ## Introduce
